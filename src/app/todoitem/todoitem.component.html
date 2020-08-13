@@ -1,0 +1,102 @@
+
+<div class="todo-container">
+  <div
+    class="task-form-container"
+  >
+    <mat-form-field>
+      <input matInput placeholder="Add new task" #newtaskinput />
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Add task priority" #priorityinput />
+    </mat-form-field>
+    <button
+      mat-raised-button
+      [disabled]="newtaskinput.value == '' || priorityinput.value == ''"
+      color="primary"
+      (click)="addTask()"
+    >
+      <mat-icon color="white">add_task</mat-icon>
+      Add
+    </button>
+  </div>
+
+  <mat-card class="todo-list-container" *ngIf="tasks.length > 0">
+    <mat-list>
+      <mat-list-item
+        *ngFor="let task of tasks; let i = index"
+        (dblclick)="editTask(task)"
+        [ngClass]="{ 'edit-mode': task.editMode }"
+      >
+        <mat-divider *ngIf="i != 0"></mat-divider>
+        <mat-slide-toggle
+          *ngIf="!task.editMode; else editContainer"
+          matTooltip="Double click to edit"
+          matTooltipPosition="above"
+          (change)="toggle(task, 'state')"
+          [checked]="!!task.done"
+          color="primary"
+        >
+          <div *ngIf="!task.editMode" [ngClass]="{ done: task.done }">
+            <b>TODO:</b> {{ task.text }}
+          </div>
+          <div *ngIf="!task.editMode" [ngClass]="{ done: task.done }">
+            <b>With a priority of:</b> {{ task.priority }}
+          </div>
+        </mat-slide-toggle>
+        <ng-template #editContainer>
+          <div class="edit-task-container">
+            <mat-form-field class="edit-input">
+              <input
+                matInput
+                placeholder="Add task name"
+                value="{{ task.text }}"
+                #edittaskinput
+              />
+            </mat-form-field>
+            <mat-form-field class="edit-input">
+              <input
+                matInput
+                placeholder="Add task priority"
+                value="{{ task.priority }}"
+                #editpriorityinput
+              />
+            </mat-form-field>
+          </div>
+        </ng-template>
+        <button
+          *ngIf="!task.editMode; else saveIcon"
+          matTooltip="Edit task"
+          matTooltipPosition="above"
+          mat-icon-button
+          (click)="editTask(task)"
+        >
+          <mat-icon class="grey-icon">edit</mat-icon>
+        </button>
+        <ng-template #saveIcon>
+          <button
+            matTooltip="Save changes"
+            matTooltipPosition="above"
+            mat-icon-button
+            (click)="saveChanges(task)"
+          >
+            <mat-icon class="grey-icon">save</mat-icon>
+          </button>
+        </ng-template>
+        <button
+          matTooltip="Delete task"
+          matTooltipPosition="above"
+          mat-icon-button
+          (click)="removeTask(task)"
+        >
+          <mat-icon class="grey-icon">delete</mat-icon>
+        </button>
+        <mat-checkbox
+          class="md-margin"
+          matTooltip="Mark for deletion"
+          matTooltipPosition="above"
+          (change)="toggle(task, 'selection')"
+        ></mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
+</div>
